@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+    "rust",
+	"external_lib"
+]
