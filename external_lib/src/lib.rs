@@ -11,18 +11,24 @@ impl Prefix {
 	}
 }
 
+impl ToString for Prefix {
+    fn to_string(&self) -> String {
+        match self {
+            Prefix::A => "A",
+            Prefix::B => "B",
+            Prefix::C => "C",
+        }.to_string()
+    }
+}
+
 #[derive(Clone)]
 pub struct PrefixedText {
 	pub prefix: Prefix,
 	pub text: String
 }
 
-impl Prefix {
-	pub fn to_str(&self, text: String) -> String {
-		match self {
-			Prefix::A => ["A", &text].join(""),
-			Prefix::B => ["B", &text].join(""),
-			Prefix::C => ["C", &text].join(""),
-		}
+impl PrefixedText {
+	pub fn to_str(&self) -> String {
+		[self.prefix.to_string(), self.text.clone()].join("")
 	}
 }
