@@ -1,13 +1,20 @@
-pub use external_lib::PrefixAdder;
+pub use external_lib::Prefix;
+pub use external_lib::PrefixedText;
 use flutter_rust_bridge::frb;
 
-#[frb(mirror(PrefixAdder))]
-pub enum _PrefixAdder {
+#[frb(mirror(Prefix))]
+pub enum _Prefix {
     A,
 	B,
 	C
 }
 
-pub fn generate_text(strategy: PrefixAdder, basic_text: String) -> String {
-	strategy.add(basic_text)
+#[frb(mirror(PrefixedText))]
+pub struct _PrefixedText {
+	pub prefix: Prefix,
+	pub text: String
+}
+
+pub fn generate_text(strategy: Prefix, basic_text: String) -> PrefixedText {
+	strategy.to_prefixed(basic_text)
 }

@@ -11,16 +11,26 @@ import 'package:meta/meta.dart';
 import 'dart:ffi' as ffi;
 
 abstract class Rust {
-  Future<String> generateText(
-      {required PrefixAdder strategy, required String basicText, dynamic hint});
+  Future<PrefixedText> generateText(
+      {required Prefix strategy, required String basicText, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGenerateTextConstMeta;
 }
 
-enum PrefixAdder {
+enum Prefix {
   A,
   B,
   C,
+}
+
+class PrefixedText {
+  final Prefix prefix;
+  final String text;
+
+  PrefixedText({
+    required this.prefix,
+    required this.text,
+  });
 }
 
 class RustImpl implements Rust {
@@ -31,16 +41,14 @@ class RustImpl implements Rust {
   factory RustImpl.wasm(FutureOr<WasmModule> module) =>
       RustImpl(module as ExternalLibrary);
   RustImpl.raw(this._platform);
-  Future<String> generateText(
-          {required PrefixAdder strategy,
+  Future<PrefixedText> generateText(
+          {required Prefix strategy,
           required String basicText,
           dynamic hint}) =>
       _platform.executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => _platform.inner.wire_generate_text(
-            port_,
-            api2wire_prefix_adder(strategy),
-            _platform.api2wire_String(basicText)),
-        parseSuccessData: _wire2api_String,
+        callFfi: (port_) => _platform.inner.wire_generate_text(port_,
+            api2wire_prefix(strategy), _platform.api2wire_String(basicText)),
+        parseSuccessData: _wire2api_prefixed_text,
         constMeta: kGenerateTextConstMeta,
         argValues: [strategy, basicText],
         hint: hint,
@@ -56,6 +64,24 @@ class RustImpl implements Rust {
 
   String _wire2api_String(dynamic raw) {
     return raw as String;
+  }
+
+  int _wire2api_i32(dynamic raw) {
+    return raw as int;
+  }
+
+  Prefix _wire2api_prefix(dynamic raw) {
+    return Prefix.values[raw];
+  }
+
+  PrefixedText _wire2api_prefixed_text(dynamic raw) {
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return PrefixedText(
+      prefix: _wire2api_prefix(arr[0]),
+      text: _wire2api_String(arr[1]),
+    );
   }
 
   int _wire2api_u8(dynamic raw) {
@@ -75,7 +101,7 @@ int api2wire_i32(int raw) {
 }
 
 @protected
-int api2wire_prefix_adder(PrefixAdder raw) {
+int api2wire_prefix(Prefix raw) {
   return api2wire_i32(raw.index);
 }
 

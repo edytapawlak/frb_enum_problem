@@ -1,15 +1,28 @@
-pub enum PrefixAdder {
+#[derive(Clone)]
+pub enum Prefix {
 	A,
 	B,
 	C
 }
 
-impl PrefixAdder {
-	pub fn add(&self, text: String) -> String {
+impl Prefix {
+	pub fn to_prefixed(&self, text: String) -> PrefixedText {
+		PrefixedText {prefix: self.clone(), text}
+	}
+}
+
+#[derive(Clone)]
+pub struct PrefixedText {
+	pub prefix: Prefix,
+	pub text: String
+}
+
+impl Prefix {
+	pub fn to_str(&self, text: String) -> String {
 		match self {
-			PrefixAdder::A => ["A", &text].join(""),
-			PrefixAdder::B => ["B", &text].join(""),
-			PrefixAdder::C => ["C", &text].join(""),
+			Prefix::A => ["A", &text].join(""),
+			Prefix::B => ["B", &text].join(""),
+			Prefix::C => ["C", &text].join(""),
 		}
 	}
 }
