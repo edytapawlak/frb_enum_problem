@@ -21,7 +21,7 @@ use flutter_rust_bridge::*;
 
 fn wire_generate_text_impl(
     port_: MessagePort,
-    strategy: impl Wire2Api<Prefix> + UnwindSafe,
+    strategy: impl Wire2Api<PrefixAlias> + UnwindSafe,
     basic_text: impl Wire2Api<String> + UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
@@ -45,7 +45,7 @@ fn wire_generate_text_impl(
 // Section: wrapper structs
 
 #[derive(Clone)]
-struct mirror_Prefix(Prefix);
+struct mirror_PrefixAlias(PrefixAlias);
 
 #[derive(Clone)]
 struct mirror_PrefixedText(PrefixedText);
@@ -53,14 +53,14 @@ struct mirror_PrefixedText(PrefixedText);
 // Section: static checks
 
 const _: fn() = || {
-    match None::<Prefix>.unwrap() {
-        Prefix::A => {}
-        Prefix::B => {}
-        Prefix::C => {}
+    match None::<PrefixAlias>.unwrap() {
+        PrefixAlias::A => {}
+        PrefixAlias::B => {}
+        PrefixAlias::C => {}
     }
     {
         let PrefixedText = None::<PrefixedText>.unwrap();
-        let _: Prefix = PrefixedText.prefix;
+        let _: PrefixAlias = PrefixedText.prefix;
         let _: String = PrefixedText.text;
     }
 };
@@ -86,13 +86,13 @@ impl Wire2Api<i32> for i32 {
         self
     }
 }
-impl Wire2Api<Prefix> for i32 {
-    fn wire2api(self) -> Prefix {
+impl Wire2Api<PrefixAlias> for i32 {
+    fn wire2api(self) -> PrefixAlias {
         match self {
-            0 => Prefix::A,
-            1 => Prefix::B,
-            2 => Prefix::C,
-            _ => unreachable!("Invalid variant for Prefix: {}", self),
+            0 => PrefixAlias::A,
+            1 => PrefixAlias::B,
+            2 => PrefixAlias::C,
+            _ => unreachable!("Invalid variant for PrefixAlias: {}", self),
         }
     }
 }
@@ -104,12 +104,12 @@ impl Wire2Api<u8> for u8 {
 
 // Section: impl IntoDart
 
-impl support::IntoDart for mirror_Prefix {
+impl support::IntoDart for mirror_PrefixAlias {
     fn into_dart(self) -> support::DartAbi {
         match self.0 {
-            Prefix::A => 0,
-            Prefix::B => 1,
-            Prefix::C => 2,
+            PrefixAlias::A => 0,
+            PrefixAlias::B => 1,
+            PrefixAlias::C => 2,
         }
         .into_dart()
     }
@@ -117,7 +117,7 @@ impl support::IntoDart for mirror_Prefix {
 impl support::IntoDart for mirror_PrefixedText {
     fn into_dart(self) -> support::DartAbi {
         vec![
-            mirror_Prefix(self.0.prefix).into_dart(),
+            mirror_PrefixAlias(self.0.prefix).into_dart(),
             self.0.text.into_dart(),
         ]
         .into_dart()

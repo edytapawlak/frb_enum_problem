@@ -12,19 +12,19 @@ import 'dart:ffi' as ffi;
 
 abstract class Rust {
   Future<PrefixedText> generateText(
-      {required Prefix strategy, required String basicText, dynamic hint});
+      {required PrefixAlias strategy, required String basicText, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGenerateTextConstMeta;
 }
 
-enum Prefix {
+enum PrefixAlias {
   A,
   B,
   C,
 }
 
 class PrefixedText {
-  final Prefix prefix;
+  final PrefixAlias prefix;
   final String text;
 
   PrefixedText({
@@ -42,12 +42,14 @@ class RustImpl implements Rust {
       RustImpl(module as ExternalLibrary);
   RustImpl.raw(this._platform);
   Future<PrefixedText> generateText(
-          {required Prefix strategy,
+          {required PrefixAlias strategy,
           required String basicText,
           dynamic hint}) =>
       _platform.executeNormal(FlutterRustBridgeTask(
-        callFfi: (port_) => _platform.inner.wire_generate_text(port_,
-            api2wire_prefix(strategy), _platform.api2wire_String(basicText)),
+        callFfi: (port_) => _platform.inner.wire_generate_text(
+            port_,
+            api2wire_prefix_alias(strategy),
+            _platform.api2wire_String(basicText)),
         parseSuccessData: _wire2api_prefixed_text,
         constMeta: kGenerateTextConstMeta,
         argValues: [strategy, basicText],
@@ -70,8 +72,8 @@ class RustImpl implements Rust {
     return raw as int;
   }
 
-  Prefix _wire2api_prefix(dynamic raw) {
-    return Prefix.values[raw];
+  PrefixAlias _wire2api_prefix_alias(dynamic raw) {
+    return PrefixAlias.values[raw];
   }
 
   PrefixedText _wire2api_prefixed_text(dynamic raw) {
@@ -79,7 +81,7 @@ class RustImpl implements Rust {
     if (arr.length != 2)
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
     return PrefixedText(
-      prefix: _wire2api_prefix(arr[0]),
+      prefix: _wire2api_prefix_alias(arr[0]),
       text: _wire2api_String(arr[1]),
     );
   }
@@ -101,7 +103,7 @@ int api2wire_i32(int raw) {
 }
 
 @protected
-int api2wire_prefix(Prefix raw) {
+int api2wire_prefix_alias(PrefixAlias raw) {
   return api2wire_i32(raw.index);
 }
 

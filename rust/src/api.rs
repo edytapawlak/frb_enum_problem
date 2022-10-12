@@ -2,8 +2,9 @@ pub use external_lib::Prefix;
 pub use external_lib::PrefixedText;
 use flutter_rust_bridge::frb;
 
-#[frb(mirror(Prefix))]
-pub enum _Prefix {
+pub type PrefixAlias = Prefix;
+#[frb(mirror(PrefixAlias))]
+pub enum _PrefixAlias {
     A,
 	B,
 	C
@@ -11,10 +12,10 @@ pub enum _Prefix {
 
 #[frb(mirror(PrefixedText))]
 pub struct _PrefixedText {
-	pub prefix: Prefix,
+	pub prefix: PrefixAlias,
 	pub text: String
 }
 
-pub fn generate_text(strategy: Prefix, basic_text: String) -> PrefixedText {
+pub fn generate_text(strategy: PrefixAlias, basic_text: String) -> PrefixedText {
 	strategy.to_prefixed(basic_text)
 }
