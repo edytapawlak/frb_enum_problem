@@ -10,12 +10,13 @@ pub enum _PrefixAlias {
 	C
 }
 
-#[frb(mirror(PrefixedText))]
-pub struct _PrefixedText {
+pub type PrefixedTextAlias = PrefixedText;
+#[frb(mirror(PrefixedTextAlias))]
+pub struct _PrefixedTextAlias {
 	pub prefix: PrefixAlias,
 	pub text: String
 }
 
-pub fn generate_text(strategy: PrefixAlias, basic_text: String) -> PrefixedText {
+pub fn generate_text(strategy: PrefixAlias, basic_text: String) -> PrefixedTextAlias {
 	strategy.to_prefixed(basic_text)
 }

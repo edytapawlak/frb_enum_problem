@@ -34,7 +34,7 @@ fn wire_generate_text_impl(
             let api_strategy = strategy.wire2api();
             let api_basic_text = basic_text.wire2api();
             move |task_callback| {
-                Ok(mirror_PrefixedText(generate_text(
+                Ok(mirror_PrefixedTextAlias(generate_text(
                     api_strategy,
                     api_basic_text,
                 )))
@@ -48,7 +48,7 @@ fn wire_generate_text_impl(
 struct mirror_PrefixAlias(PrefixAlias);
 
 #[derive(Clone)]
-struct mirror_PrefixedText(PrefixedText);
+struct mirror_PrefixedTextAlias(PrefixedTextAlias);
 
 // Section: static checks
 
@@ -59,9 +59,9 @@ const _: fn() = || {
         PrefixAlias::C => {}
     }
     {
-        let PrefixedText = None::<PrefixedText>.unwrap();
-        let _: PrefixAlias = PrefixedText.prefix;
-        let _: String = PrefixedText.text;
+        let PrefixedTextAlias = None::<PrefixedTextAlias>.unwrap();
+        let _: PrefixAlias = PrefixedTextAlias.prefix;
+        let _: String = PrefixedTextAlias.text;
     }
 };
 // Section: allocate functions
@@ -114,7 +114,7 @@ impl support::IntoDart for mirror_PrefixAlias {
         .into_dart()
     }
 }
-impl support::IntoDart for mirror_PrefixedText {
+impl support::IntoDart for mirror_PrefixedTextAlias {
     fn into_dart(self) -> support::DartAbi {
         vec![
             mirror_PrefixAlias(self.0.prefix).into_dart(),
@@ -123,7 +123,7 @@ impl support::IntoDart for mirror_PrefixedText {
         .into_dart()
     }
 }
-impl support::IntoDartExceptPrimitive for mirror_PrefixedText {}
+impl support::IntoDartExceptPrimitive for mirror_PrefixedTextAlias {}
 
 // Section: executor
 

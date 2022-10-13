@@ -11,7 +11,7 @@ import 'package:meta/meta.dart';
 import 'dart:ffi' as ffi;
 
 abstract class Rust {
-  Future<PrefixedText> generateText(
+  Future<PrefixedTextAlias> generateText(
       {required PrefixAlias strategy, required String basicText, dynamic hint});
 
   FlutterRustBridgeTaskConstMeta get kGenerateTextConstMeta;
@@ -23,11 +23,11 @@ enum PrefixAlias {
   C,
 }
 
-class PrefixedText {
+class PrefixedTextAlias {
   final PrefixAlias prefix;
   final String text;
 
-  PrefixedText({
+  PrefixedTextAlias({
     required this.prefix,
     required this.text,
   });
@@ -41,7 +41,7 @@ class RustImpl implements Rust {
   factory RustImpl.wasm(FutureOr<WasmModule> module) =>
       RustImpl(module as ExternalLibrary);
   RustImpl.raw(this._platform);
-  Future<PrefixedText> generateText(
+  Future<PrefixedTextAlias> generateText(
           {required PrefixAlias strategy,
           required String basicText,
           dynamic hint}) =>
@@ -50,7 +50,7 @@ class RustImpl implements Rust {
             port_,
             api2wire_prefix_alias(strategy),
             _platform.api2wire_String(basicText)),
-        parseSuccessData: _wire2api_prefixed_text,
+        parseSuccessData: _wire2api_prefixed_text_alias,
         constMeta: kGenerateTextConstMeta,
         argValues: [strategy, basicText],
         hint: hint,
@@ -76,11 +76,11 @@ class RustImpl implements Rust {
     return PrefixAlias.values[raw];
   }
 
-  PrefixedText _wire2api_prefixed_text(dynamic raw) {
+  PrefixedTextAlias _wire2api_prefixed_text_alias(dynamic raw) {
     final arr = raw as List<dynamic>;
     if (arr.length != 2)
       throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return PrefixedText(
+    return PrefixedTextAlias(
       prefix: _wire2api_prefix_alias(arr[0]),
       text: _wire2api_String(arr[1]),
     );
