@@ -19,14 +19,14 @@ use flutter_rust_bridge::*;
 
 // Section: wire functions
 
-fn wire_generate_text_impl(
+fn wire_generate_prefixed_text_impl(
     port_: MessagePort,
     strategy: impl Wire2Api<PrefixAlias> + UnwindSafe,
     basic_text: impl Wire2Api<String> + UnwindSafe,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap(
         WrapInfo {
-            debug_name: "generate_text",
+            debug_name: "generate_prefixed_text",
             port: Some(port_),
             mode: FfiCallMode::Normal,
         },
@@ -34,11 +34,50 @@ fn wire_generate_text_impl(
             let api_strategy = strategy.wire2api();
             let api_basic_text = basic_text.wire2api();
             move |task_callback| {
-                Ok(mirror_PrefixedTextAlias(generate_text(
+                Ok(mirror_PrefixedTextAlias(generate_prefixed_text(
                     api_strategy,
                     api_basic_text,
                 )))
             }
+        },
+    )
+}
+fn wire_generate_sufixed_text_impl(
+    port_: MessagePort,
+    strategy: impl Wire2Api<SufixAlias> + UnwindSafe,
+    basic_text: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "generate_sufixed_text",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_strategy = strategy.wire2api();
+            let api_basic_text = basic_text.wire2api();
+            move |task_callback| {
+                Ok(mirror_SufixedTextAlias(generate_sufixed_text(
+                    api_strategy,
+                    api_basic_text,
+                )))
+            }
+        },
+    )
+}
+fn wire_transformed_text_from_str_impl(
+    port_: MessagePort,
+    str: impl Wire2Api<String> + UnwindSafe,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap(
+        WrapInfo {
+            debug_name: "transformed_text_from_str",
+            port: Some(port_),
+            mode: FfiCallMode::Normal,
+        },
+        move || {
+            let api_str = str.wire2api();
+            move |task_callback| Ok(mirror_TransformedText(transformed_text_from_str(api_str)))
         },
     )
 }
@@ -49,6 +88,15 @@ struct mirror_PrefixAlias(PrefixAlias);
 
 #[derive(Clone)]
 struct mirror_PrefixedTextAlias(PrefixedTextAlias);
+
+#[derive(Clone)]
+struct mirror_SufixAlias(SufixAlias);
+
+#[derive(Clone)]
+struct mirror_SufixedTextAlias(SufixedTextAlias);
+
+#[derive(Clone)]
+struct mirror_TransformedText(TransformedText);
 
 // Section: static checks
 
@@ -62,6 +110,24 @@ const _: fn() = || {
         let PrefixedTextAlias = None::<PrefixedTextAlias>.unwrap();
         let _: PrefixAlias = PrefixedTextAlias.prefix;
         let _: String = PrefixedTextAlias.text;
+    }
+    match None::<SufixAlias>.unwrap() {
+        SufixAlias::A => {}
+        SufixAlias::B => {}
+        SufixAlias::C => {}
+    }
+    {
+        let SufixedTextAlias = None::<SufixedTextAlias>.unwrap();
+        let _: SufixAlias = SufixedTextAlias.sufix;
+        let _: String = SufixedTextAlias.text;
+    }
+    match None::<TransformedText>.unwrap() {
+        TransformedText::Sufixed(field0) => {
+            let _: SufixedTextAlias = field0;
+        }
+        TransformedText::Prefixed(field0) => {
+            let _: PrefixedTextAlias = field0;
+        }
     }
 };
 // Section: allocate functions
@@ -96,6 +162,16 @@ impl Wire2Api<PrefixAlias> for i32 {
         }
     }
 }
+impl Wire2Api<SufixAlias> for i32 {
+    fn wire2api(self) -> SufixAlias {
+        match self {
+            0 => SufixAlias::A,
+            1 => SufixAlias::B,
+            2 => SufixAlias::C,
+            _ => unreachable!("Invalid variant for SufixAlias: {}", self),
+        }
+    }
+}
 impl Wire2Api<u8> for u8 {
     fn wire2api(self) -> u8 {
         self
@@ -124,6 +200,38 @@ impl support::IntoDart for mirror_PrefixedTextAlias {
     }
 }
 impl support::IntoDartExceptPrimitive for mirror_PrefixedTextAlias {}
+
+impl support::IntoDart for mirror_SufixAlias {
+    fn into_dart(self) -> support::DartAbi {
+        match self.0 {
+            SufixAlias::A => 0,
+            SufixAlias::B => 1,
+            SufixAlias::C => 2,
+        }
+        .into_dart()
+    }
+}
+impl support::IntoDart for mirror_SufixedTextAlias {
+    fn into_dart(self) -> support::DartAbi {
+        vec![
+            mirror_SufixAlias(self.0.sufix).into_dart(),
+            self.0.text.into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for mirror_SufixedTextAlias {}
+
+impl support::IntoDart for mirror_TransformedText {
+    fn into_dart(self) -> support::DartAbi {
+        match self.0 {
+            TransformedText::Sufixed(field0) => vec![0.into_dart(), field0.into_dart()],
+            TransformedText::Prefixed(field0) => vec![1.into_dart(), field0.into_dart()],
+        }
+        .into_dart()
+    }
+}
+impl support::IntoDartExceptPrimitive for mirror_TransformedText {}
 
 // Section: executor
 

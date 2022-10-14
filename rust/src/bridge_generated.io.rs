@@ -2,8 +2,26 @@ use super::*;
 // Section: wire functions
 
 #[no_mangle]
-pub extern "C" fn wire_generate_text(port_: i64, strategy: i32, basic_text: *mut wire_uint_8_list) {
-    wire_generate_text_impl(port_, strategy, basic_text)
+pub extern "C" fn wire_generate_prefixed_text(
+    port_: i64,
+    strategy: i32,
+    basic_text: *mut wire_uint_8_list,
+) {
+    wire_generate_prefixed_text_impl(port_, strategy, basic_text)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_generate_sufixed_text(
+    port_: i64,
+    strategy: i32,
+    basic_text: *mut wire_uint_8_list,
+) {
+    wire_generate_sufixed_text_impl(port_, strategy, basic_text)
+}
+
+#[no_mangle]
+pub extern "C" fn wire_transformed_text_from_str(port_: i64, str: *mut wire_uint_8_list) {
+    wire_transformed_text_from_str_impl(port_, str)
 }
 
 // Section: allocate functions
