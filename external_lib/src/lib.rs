@@ -13,16 +13,6 @@ impl Prefix {
 	}
 }
 
-impl ToString for Prefix {
-    fn to_string(&self) -> String {
-        match self {
-            Prefix::A => "A",
-            Prefix::B => "B",
-            Prefix::C => "C",
-        }.to_string()
-    }
-}
-
 #[derive(Clone, Debug)]
 pub enum Sufix {
 	A,
@@ -36,39 +26,16 @@ impl Sufix {
 	}
 }
 
-impl ToString for Sufix {
-    fn to_string(&self) -> String {
-        match self {
-            Sufix::A => "A",
-            Sufix::B => "B",
-            Sufix::C => "C",
-        }.to_string()
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct PrefixedText {
 	pub prefix: Prefix,
 	pub text: String
 }
-
-impl PrefixedText {
-	pub fn to_str(&self) -> String {
-		[self.prefix.to_string(), self.text.clone()].join("")
-	}
-}
-
 #[derive(Debug)]
 #[derive(Clone)]
 pub struct SufixedText {
 	pub sufix: Sufix,
 	pub text: String
-}
-
-impl SufixedText {
-	pub fn to_str(&self) -> String {
-		[self.text.clone(), self.sufix.to_string()].join("")
-	}
 }
 
 #[derive(Debug, Clone)]

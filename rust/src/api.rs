@@ -3,48 +3,44 @@ pub use external_lib::{Prefix, Sufix};
 pub use external_lib::{PrefixedText, SufixedText};
 use flutter_rust_bridge::frb;
 
-pub type PrefixAlias = Prefix;
-#[frb(mirror(PrefixAlias))]
-pub enum _PrefixAlias {
+#[frb(mirror(Prefix))]
+pub enum _Prefix{
     A,
 	B,
 	C
 }
 
-pub type PrefixedTextAlias = PrefixedText;
-#[frb(mirror(PrefixedTextAlias))]
-pub struct _PrefixedTextAlias {
-	pub prefix: PrefixAlias,
+#[frb(mirror(PrefixedText))]
+pub struct _PrefixedText{
+	pub prefix: Prefix,
 	pub text: String
 }
 
-pub fn generate_prefixed_text(strategy: PrefixAlias, basic_text: String) -> PrefixedTextAlias {
+pub fn generate_prefixed_text(strategy: Prefix, basic_text: String) -> PrefixedText{
 	strategy.to_prefixed(basic_text)
 }
 
-pub type SufixAlias = Sufix;
-#[frb(mirror(SufixAlias))]
-pub enum _SufixAlias {
+#[frb(mirror(Sufix))]
+pub enum _Sufix{
     A,
 	B,
 	C
 }
 
-pub type SufixedTextAlias = SufixedText;
-#[frb(mirror(SufixedTextAlias))]
-pub struct _SufixedTextAlias {
-	pub sufix: SufixAlias,
+#[frb(mirror(SufixedText))]
+pub struct _SufixedText{
+	pub sufix: Sufix,
 	pub text: String
 }
 
-pub fn generate_sufixed_text(strategy: SufixAlias, basic_text: String) -> SufixedTextAlias {
+pub fn generate_sufixed_text(strategy: Sufix, basic_text: String) -> SufixedText {
 	strategy.to_sufixed(basic_text)
 }
 
 #[frb(mirror(TransformedText))]
 pub enum _TransformedText {
-	Sufixed(SufixedTextAlias),
-	Prefixed(PrefixedTextAlias)
+	Sufixed(SufixedText),
+	Prefixed(PrefixedText)
 }
 
 pub fn transformed_text_from_str(str: String) -> TransformedText {
